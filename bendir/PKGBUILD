@@ -1,7 +1,7 @@
 # Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
 pkgname=textgen-ben
-pkgver=0.1
+pkgver=0.2
 pkgrel=1
 arch=('x86_64')
 depends=(
@@ -14,33 +14,28 @@ options=('!strip')
 
 cd
 prepare () {
-	rm -r "$srcdir"  #clean src before using
-	export _twd=$srcdir
 	#download latest micromamba
-	mkdir -p $_twd/mambadir && cd $_twd/mambadir && if [ ! -f $_twd/mambadir/latest ]; 
+	mkdir mambadir && cd mambadir && if [ ! -f $mambadir/latest ]; 
 			then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
 	fi
-	export MAMBA_EXE=$_twd/mambadir/bin/micromamba #micromamba now runnable from this script
+	export MAMBA_EXE=$mambadir/bin/micromamba #micromamba now runnable from this script
 	
 	#make  environment
-	micromamba create --prefix=$_twd/env_textgen
+	micromamba create -n env_textgen
+	export _env=env_textgen
 }
 
 _hook_mamba() {
-	eval "$($MAMBA_EXE shell hook --shell=bash)" #hooks micromamba to current shell
+	eval "$($MAMBA_EXE shell hook --shell=bash)"
 }
 
 build () {
-	_hook_mamba
-	micromamba activate $_twd/env_textgen
-	micromamba install python=3.10 gradio pytorch pip
+	_hook_mamba && micromamba activate $_env	
+	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
 }
 
 package () {
-	cd $pkgdir && cp -r  $_twd/env_textgen ./env_textgen
-	_twd=$pkgdir
-	_hook_mamba
-	export _envdir=$_twd/env_textgen
-	micromamba activate --prefix=$_envdir
+	_hook_mamba && micromamba activate $_env
+	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
 }
 
