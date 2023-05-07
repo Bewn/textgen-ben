@@ -1,0 +1,44 @@
+# Maintainer: Ben Rosebery <benrosebery@gmail.com>
+# this is a pkgbuild to simplifiy installing the oobabooga text generation webui
+# it's self contained so the only dependencies are git and wget
+# you don't even need python! this downloads micromamba and creates a fast and small conda env.
+
+pkgname=textgen-ben
+pkgver=0.2
+pkgrel=1
+arch=('x86_64')
+depends=(
+'git'
+'wget'
+)
+url="http://github.com/Bewn/textgen-ben.git"
+md5sums=()
+options=('!strip')
+
+cd
+prepare () {
+	#download latest micromamba
+	mkdir mambadir && cd mambadir && if [ ! -f $mambadir/latest ]; 
+			then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
+	fi
+	export MAMBA_EXE=$mambadir/bin/micromamba #micromamba now runnable from this script
+	
+	#make  environment
+	micromamba create -n env_textgen
+	export _env=env_textgen
+}
+
+_hook_mamba() {
+	eval "$($MAMBA_EXE shell hook --shell=bash)"
+}
+
+build () {
+	_hook_mamba && micromamba activate $_env	
+	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+}
+
+package () {
+	_hook_mamba && micromamba activate $_env
+	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+}
+
