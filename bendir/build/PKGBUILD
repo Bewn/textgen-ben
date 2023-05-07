@@ -28,17 +28,20 @@ prepare () {
 	export _env=env_textgen
 }
 
-_hook_mamba() {
+_hook_mamba () {
 	eval "$($MAMBA_EXE shell hook --shell=bash)"
+	micromamba activate $_env
 }
 
 build () {
-	_hook_mamba && micromamba activate $_env	
+	_hook_mamba
 	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
 }
 
 package () {
-	_hook_mamba && micromamba activate $_env
+	_hook_mamba
 	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+	cp -r "./" $pkgdir
+	export _gitdir="../../git-src/" && cd $_gitdir && cp server.py $pkgdir
 }
 
