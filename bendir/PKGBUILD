@@ -1,0 +1,50 @@
+# Maintainer: Ben Rosebery <benrosebery@gmail.com>
+
+pkgname=textgen-ben
+pkgver=0.1
+pkgrel=1
+arch=('x86_64')
+depends=(
+'wget'
+)
+url="http://github.com/Bewn/textgen-ben.git"
+#source or git pull
+if [ ! -d $srcdir/textgen-ben ]; then cd $srcdir && source=(git+$url);
+	else cd $srcdir && git pull;
+fi
+
+md5sums=('SKIP')
+options=('!strip')
+
+prepare () {
+	export _twd="$srcdir"
+	cd $_twd
+
+	#download latest micromamba
+	mkdir -p $_twd/mambadir
+	cd $mambadir
+	if [ ! -f ./latest ]; then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf ./latest;
+	fi
+	export MAMBA_EXE=$_twd/mambadir/bin/micromamba #micromamba now runnable from this script
+	mkdir $_twd/env_textgen && cd $_twd/env_textgen && rm -r ./*
+	micromamba create --prefix=$_twd/env_textgen
+}
+
+_hook_mamba() {
+	eval "$($MAMBA_EXE shell hook --shell=bash)" #hooks micromamba to current shell
+}
+
+build () {
+	_hook_mamba
+	micromamba activate $_twd/env_textgen
+	micromamba install python=3.10 gradio pytorch pip
+}
+
+package () {
+	cd $pkgdir && cp -r  $_twd/env_textgen ./env_textgen
+	_twd=$pkgdir
+	_hook_mamba
+	export _envdir=$_twd/env_textgen
+	micromamba activate --prefix=$_envdir
+}
+
