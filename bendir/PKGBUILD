@@ -5,28 +5,24 @@ pkgver=0.1
 pkgrel=1
 arch=('x86_64')
 depends=(
+'git'
 'wget'
 )
 url="http://github.com/Bewn/textgen-ben.git"
-#source or git pull
-if [ ! -d $srcdir/textgen-ben ]; then cd $srcdir && source=(git+$url);
-	else cd $srcdir && git pull;
-fi
-
-md5sums=('SKIP')
+md5sums=()
 options=('!strip')
 
+cd
 prepare () {
-	export _twd="$srcdir"
-	cd $_twd
-
+	rm -r "$srcdir"  #clean src before using
+	export _twd=$srcdir
 	#download latest micromamba
-	mkdir -p $_twd/mambadir
-	cd $mambadir
-	if [ ! -f ./latest ]; then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf ./latest;
+	mkdir -p $_twd/mambadir && cd $_twd/mambadir && if [ ! -f $_twd/mambadir/latest ]; 
+			then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
 	fi
 	export MAMBA_EXE=$_twd/mambadir/bin/micromamba #micromamba now runnable from this script
-	mkdir $_twd/env_textgen && cd $_twd/env_textgen && rm -r ./*
+	
+	#make  environment
 	micromamba create --prefix=$_twd/env_textgen
 }
 
