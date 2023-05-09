@@ -20,9 +20,9 @@ cd && _cwd=$HOME
 
 prepare () {
 	cd $_cwd
-	if [ ! -d "$_cwd/textgen-ben-portable" ]; then mkdir $_cwd/textgen-ben-portable; fi
-	cd $_cwd/textgen-ben-portable
-	_cwd=$_cwd/textgen-ben-portable
+	if [ ! -d "$_cwd/textgen-portable" ]; then mkdir $_cwd/textgen-portable; fi
+	cd $_cwd/textgen-portable
+	_cwd=$_cwd/textgen-portable
 
 	#download latest micromamba
 	if [ ! -d $_cwd/micromamba ]; then mkdir $_cwd/micromamba && cd $_cwd/micromamba
@@ -49,8 +49,8 @@ build () {
 
 package () {
 	_cwd=$HOME
-	cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; then prepare; fi
-	_cwd=$_cwd/textgen-ben-portable && cd $_cwd
+	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
+	_cwd=$_cwd/textgen-portable && cd $_cwd
 	git init && git remote add portable $url && git fetch portable
-	git checkout portable/main -- server.py
+	git checkout portable/main -- server.py bendir/textgen-ben.py
 }
