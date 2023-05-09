@@ -52,5 +52,5 @@ package () {
 	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
 	_cwd=$_cwd/textgen-portable && cd $_cwd
 	git init && git remote add portable $url && git fetch portable
-	git checkout portable/main -- server.py bendir/textgen-ben.py
+	git checkout portable/main -- server.py bendir/textgen-ben.py bendir/local_env_textgen.sh
 }
