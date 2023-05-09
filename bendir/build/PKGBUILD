@@ -45,18 +45,20 @@ build () {
 	_hook_mamba
 	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
 	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
-	#pip install cython
-}
 
-package () {
-	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
-	_cwd=$_cwd/textgen-portable && cd $_cwd
 	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
 	git checkout original/main -- server.py download-model.py \
 			settings-template.json \ 
 			characters css docs extensions loras models modules presets prompts softprompts training
 	git remote add benver $url && git fetch benver 
 	git checkout benver/main -- bendir 
+	#pip install cython
+}
+
+package () {
+	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
+	_cwd=$_cwd/textgen-portable && cd $_cwd
+	
 	cp $_cwd/bendir/textgen-ben.py $_cwd/bendir/local_env_textgen.sh $_cwd
 	mkdir $pkgdir/opt
 	mv $_cwd $pkgdir/opt

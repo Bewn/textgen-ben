@@ -3,8 +3,20 @@
 # accessible to generic x86_64 distros
 #
 
+pkgname=textgen-ben
+pkgver=0.4
+pkgrel=1
+arch=('x86_64')
+
+##quick and sly dependency check
+if [ ! -z [ $(git --version && wget --version) | grep "not found" ]  ]; then exit; fi
+url="https://github.com/Bewn/textgen-ben"
+
 _cwd=$PWD
 cd $_cwd
+
+############################ function definitions ###############################################
+
 prepare () {
 	cd $_cwd
 	if [ ! -d "$_cwd/textgen-portable" ]; then mkdir $_cwd/textgen-portable; fi
@@ -22,9 +34,40 @@ prepare () {
 	export _mamba_env=$_cwd/env_textgen
 }
 
+hook_mamba () {
+	eval "$($MAMBA_EXE shell hook --shell=bash)"
+	micromamba activate $_mamba_env
+}
+
+build () {
+	hook_mamba
+    cd $_cwd
+    #micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+    
+    #pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+
+	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
+	git checkout original/main -- server.py download-model.py settings-template.json characters css docs extensions loras models modules presets prompts softprompts training
+	git remote add benver $url && git fetch benver 
+	git checkout benver/main -- bendir 
+	#pip install cython
+}
+
+package () {
+	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
+	_cwd=$_cwd/textgen-portable && cd $_cwd
+	
+	cp $_cwd/bendir/textgen-ben.py $_cwd/bendir/local_env_textgen.sh $_cwd
+	mkdir $pkgdir/opt
+	mv $_cwd $pkgdir/opt
+}
+
+################## main #############################
+#####################################################
 main () {
     #pythonic bash with functional flair
-    $(prepare)
+    prepare
+    build
 }
 
 main
