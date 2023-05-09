@@ -17,17 +17,21 @@ md5sums=()
 options=('!strip')
 
 cd
-_cwd=$PWD
+_cwd=$HOME
 
 prepare () {
+	cd $_cwd
+	mkdir $_cwd/textgen-ben && cd $_cwd/textgen-ben
+	_cwd=$_cwd/textgen-ben
+
 	#download latest micromamba
-	mkdir mambadir && cd mambadir && if [ ! -f $mambadir/latest ]; 
-			then wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
+	if [ ! -d $_cwd/micromamba ]; then mkdir $_cwd/micromamba && cd $_cwd/micromamba
+		wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
 	fi
-	export MAMBA_EXE=$mambadir/bin/micromamba #micromamba now runnable from this script
+	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
 	
 	#make  environment
-	micromamba create -n env_textgen
+	$MAMBA_EXE create -n env_textgen
 	export _env=env_textgen
 }
 
@@ -44,10 +48,13 @@ build () {
 }
 
 package () {
-	_cwd=$HOME
-	cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; then mkdir textgen-ben-portable; fi
-	mkdir $_cwd/textgen-ben-portable/git-src && git clone $url $_cwd/textgen-ben-portable/git-src
-	mv $srcdir/* $_cwd/textgen-ben-portable && rmdir $srcdir
-	mv $_cwd/micromamba $_cwd/textgen-ben-portable
+	continue
+	#_cwd=$HOME
+	#cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; 
+	#then mkdir textgen-ben-portable; fi
+	#mv $srcdir/* $_cwd/textgen-ben-portable && rmdir $srcdir
+	#mv $_cwd/micromamba $_cwd/textgen-ben-portable
+	#_twd=$_cwd/textgen-ben-portable
+	#cd $_twd && git remote add portable $url%.git && git fetch portable
+	#git checkout portable/main -- server.py
 }
-
