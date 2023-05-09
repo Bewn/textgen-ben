@@ -2,6 +2,7 @@
 # this is a pkgbuild to simplifiy installing the oobabooga text generation webui
 # it's self contained so the only dependencies are git and wget
 # you don't even need python! this downloads micromamba and creates a fast and small conda env.
+# this will install "textgen-ben-portable" in your home directory
 
 pkgname=textgen-ben
 pkgver=0.2
@@ -16,6 +17,8 @@ md5sums=()
 options=('!strip')
 
 cd
+_cwd=$PWD
+
 prepare () {
 	#download latest micromamba
 	mkdir mambadir && cd mambadir && if [ ! -f $mambadir/latest ]; 
@@ -36,12 +39,15 @@ _hook_mamba () {
 build () {
 	_hook_mamba
 	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+	pip install cython
 }
 
 package () {
-	_hook_mamba
-	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
-	cp -r "./" $pkgdir
-	export _gitdir="../../git-src/" && cd $_gitdir && cp server.py $pkgdir
+	_cwd=$HOME
+	cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; then mkdir textgen-ben-portable; fi
+	mkdir $_cwd/textgen-ben-portable/git-src && git clone $url $_cwd/textgen-ben-portable/git-src
+	mv $srcdir/* $_cwd/textgen-ben-portable && rmdir $srcdir
+	mv $_cwd/micromamba $_cwd/textgen-ben-portable
 }
 
