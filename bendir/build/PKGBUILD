@@ -51,6 +51,10 @@ package () {
 	_cwd=$HOME
 	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
 	_cwd=$_cwd/textgen-portable && cd $_cwd
-	git init && git remote add portable $url && git fetch portable
-	git checkout portable/main -- server.py bendir/textgen-ben.py bendir/local_env_textgen.sh
+	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
+	git checkout original/main -- server.py download-model.py \
+			settings-template.json convert-to-safetensors.py convert-to-flexgen.py api-example.py api-example-stream.py \
+			characters css docs extensions loras models modules presets prompts softprompts training
+	git remote add benver $url && git fetch benver 
+	git checkout benver/main -- bendir 
 }
