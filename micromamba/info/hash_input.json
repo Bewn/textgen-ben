@@ -1,0 +1,13 @@
+{
+  "cxx_compiler": "gxx",
+  "openssl": "3",
+  "c_compiler_version": "12",
+  "zlib": "1.2",
+  "libcurl": "8",
+  "c_compiler": "gcc",
+  "channel_targets": "conda-forge main",
+  "target_platform": "linux-64",
+  "spdlog": "1.11",
+  "fmt": "9",
+  "cxx_compiler_version": "12"
+}

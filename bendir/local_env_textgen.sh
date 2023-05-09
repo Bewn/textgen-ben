@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 #
 
-_SELF=$HOME/textgen-portable
+_SELF=*/textgen-portable
 export MAMBA_EXE=$_SELF/micromamba/bin/micromamba
 
 hook_mamba () {
