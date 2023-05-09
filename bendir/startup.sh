@@ -7,6 +7,7 @@
 # you don't even need python! this downloads micromamba and creates a fast and small conda env.
 # this will install "textgen-portable" in your current directory
 
+
 # Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
 pkgname=textgen-ben
@@ -60,12 +61,13 @@ build () {
 }
 
 package () {
+    #install to local user root
+    pkgdir=$HOME/../../
 	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
 	_cwd=$_cwd/textgen-portable && cd $_cwd
 	
-	cp $_cwd/bendir/textgen-ben.py $_cwd/bendir/local_env_textgen.sh $_cwd
-	mkdir $pkgdir/opt
-	mv $_cwd $pkgdir/opt
+	sudo mkdir $pkgdir/opt
+	sudo mv $_cwd $pkgdir/opt
 }
 
 ################## main #############################
