@@ -42,9 +42,9 @@ _hook_mamba () {
 
 build () {
 	_hook_mamba
-	#micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
-	#pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
-	#pip install cython
+	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+	pip install cython
 }
 
 package () {
