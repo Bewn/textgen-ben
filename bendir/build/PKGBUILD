@@ -5,24 +5,24 @@
 # this will install "textgen-ben-portable" in your home directory
 
 pkgname=textgen-ben
-pkgver=0.2
+pkgver=0.4
 pkgrel=1
 arch=('x86_64')
 depends=(
 'git'
 'wget'
 )
-url="http://github.com/Bewn/textgen-ben.git"
+url="https://github.com/Bewn/textgen-ben"
 md5sums=()
 options=('!strip')
 
-cd
-_cwd=$HOME
+cd && _cwd=$HOME
 
 prepare () {
 	cd $_cwd
-	mkdir $_cwd/textgen-ben && cd $_cwd/textgen-ben
-	_cwd=$_cwd/textgen-ben
+	if [ ! -d "$_cwd/textgen-ben-portable" ]; then mkdir $_cwd/textgen-ben-portable; fi
+	cd $_cwd/textgen-ben-portable
+	_cwd=$_cwd/textgen-ben-portable
 
 	#download latest micromamba
 	if [ ! -d $_cwd/micromamba ]; then mkdir $_cwd/micromamba && cd $_cwd/micromamba
@@ -31,30 +31,26 @@ prepare () {
 	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
 	
 	#make  environment
-	$MAMBA_EXE create -n env_textgen
-	export _env=env_textgen
+	$MAMBA_EXE create --prefix=$_cwd/env_textgen
+	export _mamba_env=$_cwd/env_textgen
 }
 
 _hook_mamba () {
 	eval "$($MAMBA_EXE shell hook --shell=bash)"
-	micromamba activate $_env
+	micromamba activate $_mamba_env
 }
 
 build () {
 	_hook_mamba
-	micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
-	pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
-	pip install cython
+	#micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+	#pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+	#pip install cython
 }
 
 package () {
-	continue
-	#_cwd=$HOME
-	#cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; 
-	#then mkdir textgen-ben-portable; fi
-	#mv $srcdir/* $_cwd/textgen-ben-portable && rmdir $srcdir
-	#mv $_cwd/micromamba $_cwd/textgen-ben-portable
-	#_twd=$_cwd/textgen-ben-portable
-	#cd $_twd && git remote add portable $url%.git && git fetch portable
-	#git checkout portable/main -- server.py
+	_cwd=$HOME
+	cd $_cwd && if [ ! -d $_cwd/textgen-ben-portable ]; then prepare; fi
+	_cwd=$_cwd/textgen-ben-portable && cd $_cwd
+	git init && git remote add portable $url && git fetch portable
+	git checkout portable/main -- server.py
 }
