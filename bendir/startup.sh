@@ -2,6 +2,12 @@
 # this code is based on the arch PKGBUILD in the build directory, but should be 
 # accessible to generic x86_64 distros
 #
+# this is a shell scipt to simplifiy installing the oobabooga text generation webui
+# it's self contained so the only dependencies are git and wget
+# you don't even need python! this downloads micromamba and creates a fast and small conda env.
+# this will install "textgen-portable" in your current directory
+
+# Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
 pkgname=textgen-ben
 pkgver=0.4
