@@ -11,7 +11,7 @@
 # Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
 pkgname=textgen-ben
-pkgver=0.4
+pkgver=0.5
 pkgrel=1
 arch=('x86_64')
 
@@ -49,9 +49,9 @@ hook_mamba () {
 build () {
 	hook_mamba
     cd $_cwd
-    #micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+    micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
     
-    #pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+    pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
 
 	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
 	git checkout original/main -- server.py download-model.py settings-template.json characters css docs extensions loras models modules presets prompts softprompts training
@@ -61,7 +61,7 @@ build () {
 }
 
 package () {
-    #install to local user root
+    #install to local root/opt
     pkgdir=$HOME/../../
 	cd $_cwd && if [ ! -d $_cwd/textgen-portable ]; then prepare; fi
 	_cwd=$_cwd/textgen-portable && cd $_cwd
